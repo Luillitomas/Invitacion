@@ -27,6 +27,17 @@
     *{box-sizing:border-box}
     html,body{height:100%}
 
+    /* Evita “marcos blancos” al hacer bounce/overscroll en móvil */
+    html{
+      background:
+        radial-gradient(900px 500px at 20% 10%, rgba(255,77,166,.22), transparent 60%),
+        radial-gradient(700px 520px at 85% 20%, rgba(77,255,210,.14), transparent 65%),
+        radial-gradient(900px 800px at 50% 100%, rgba(255,255,255,.07), transparent 60%),
+        linear-gradient(180deg, var(--bg1), var(--bg2));
+      background-color: var(--bg1);
+      overscroll-behavior: none;
+    }
+
     body{
       margin:0;
       color:var(--ink);
@@ -37,6 +48,9 @@
         radial-gradient(700px 520px at 85% 20%, rgba(77,255,210,.14), transparent 65%),
         radial-gradient(900px 800px at 50% 100%, rgba(255,255,255,.07), transparent 60%),
         linear-gradient(180deg, var(--bg1), var(--bg2));
+      background-color: var(--bg1);
+      overscroll-behavior: none;
+      -webkit-overflow-scrolling: touch;
     }
 
     .wrap{
@@ -107,7 +121,6 @@
         radial-gradient(520px 220px at 90% 10%, rgba(77,255,210,.14), transparent 60%);
       z-index:0;
       pointer-events:none;
-      transition: opacity .35s ease;
     }
 
     .card > *{position:relative; z-index:1}
@@ -115,7 +128,7 @@
     .topbar{
       display:flex;
       align-items:center;
-      justify-content:space-between;
+      justify-content:center;
       gap:12px;
       flex-wrap:wrap;
     }
@@ -133,6 +146,7 @@
       font-size: 13px;
       color: var(--muted);
       white-space: nowrap;
+      text-align:center;
     }
 
     .pulse{
@@ -155,6 +169,7 @@
       font-size: clamp(30px, 4.7vw, 52px);
       letter-spacing: -0.02em;
       line-height: 1.06;
+      text-align:left;
     }
 
     .title .name{
@@ -168,7 +183,7 @@
         0 18px 60px rgba(168,85,247,.12);
     }
 
-    /* ===== Shimmer suave cada ~4s ===== */
+    /* Shimmer suave */
     .title .question{
       background: linear-gradient(90deg, #ff2d3d, #ff4da6, #a855f7, #ff4da6, #ff2d3d);
       background-size: 240% 100%;
@@ -206,54 +221,6 @@
       color: rgba(255,255,255,.80);
       max-width: 62ch;
     }
-
-    /* ===== Carta (acordeón) ===== */
-    .accordion{
-      margin: 14px 0 8px;
-      border: 1px solid rgba(255,255,255,.16);
-      background: rgba(255,255,255,.06);
-      border-radius: 20px;
-      overflow:hidden;
-    }
-
-    .accordion summary{
-      list-style:none;
-      cursor:pointer;
-      padding: 14px 16px;
-      font-weight: 900;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      color: rgba(255,255,255,.92);
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .accordion summary::-webkit-details-marker{ display:none; }
-
-    .accordion__chev{
-      width:28px;
-      height:28px;
-      border-radius: 12px;
-      display:grid;
-      place-items:center;
-      background: rgba(255,255,255,.10);
-      border: 1px solid rgba(255,255,255,.14);
-      transition: transform .25s ease;
-      flex:0 0 auto;
-    }
-
-    .accordion[open] .accordion__chev{ transform: rotate(180deg); }
-
-    .accordion__content{
-      padding: 0 16px 16px;
-      color: rgba(255,255,255,.78);
-      line-height: 1.7;
-      font-size: 15px;
-    }
-
-    .accordion__content p{ margin: 0 0 10px; }
-    .accordion__content p:last-child{ margin:0; }
 
     .actions{
       display:flex;
@@ -306,6 +273,17 @@
 
     .btn-no:hover{ background: rgba(255,255,255,.09) }
 
+    .spark{
+      display:inline-grid;
+      place-items:center;
+      width:26px;
+      height:26px;
+      border-radius: 10px;
+      background: rgba(255,255,255,.14);
+      border:1px solid rgba(255,255,255,.20);
+      font-size: 16px;
+    }
+
     /* Overlay */
     .overlay{
       position:fixed;
@@ -317,6 +295,9 @@
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       z-index: 50;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      -webkit-overflow-scrolling: touch;
     }
 
     .overlay.show{display:grid}
@@ -329,7 +310,10 @@
       box-shadow: 0 30px 90px rgba(0,0,0,.55);
       padding: 22px;
       position:relative;
-      overflow:hidden;
+      max-height: calc(100vh - 60px);
+      overflow: auto;
+      overscroll-behavior: contain;
+      -webkit-overflow-scrolling: touch;
     }
 
     .modal::before{
@@ -355,6 +339,54 @@
       color: rgba(255,255,255,.78);
       line-height:1.6;
     }
+
+    /* Carta (acordeón) en modal */
+    .accordion{
+      margin: 14px 0 8px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.06);
+      border-radius: 20px;
+      overflow:hidden;
+    }
+
+    .accordion summary{
+      list-style:none;
+      cursor:pointer;
+      padding: 14px 16px;
+      font-weight: 900;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      color: rgba(255,255,255,.92);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .accordion summary::-webkit-details-marker{ display:none; }
+
+    .accordion__chev{
+      width:28px;
+      height:28px;
+      border-radius: 12px;
+      display:grid;
+      place-items:center;
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.14);
+      transition: transform .25s ease;
+      flex:0 0 auto;
+    }
+
+    .accordion[open] .accordion__chev{ transform: rotate(180deg); }
+
+    .accordion__content{
+      padding: 0 16px 16px;
+      color: rgba(255,255,255,.78);
+      line-height: 1.7;
+      font-size: 15px;
+    }
+
+    .accordion__content p{ margin: 0 0 10px; }
+    .accordion__content p:last-child{ margin:0; }
 
     /* Countdown */
     .countdown{
@@ -399,17 +431,6 @@
       min-width: 160px;
     }
 
-    .spark{
-      display:inline-grid;
-      place-items:center;
-      width:26px;
-      height:26px;
-      border-radius: 10px;
-      background: rgba(255,255,255,.14);
-      border:1px solid rgba(255,255,255,.20);
-      font-size: 16px;
-    }
-
     /* Confetti */
     .confetti{
       position:fixed;
@@ -441,7 +462,7 @@
       .row{justify-content:center}
       .btn-ghost{width:100%}
       .badge{white-space: normal}
-      .topbar{justify-content:center}
+      .title{ text-align:left }
     }
   </style>
 </head>
@@ -480,7 +501,7 @@
   </div>
 
   <section class="overlay" id="overlay" aria-hidden="true">
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
       <h2 id="modalTitle">Te amo mi melocotoncita ❤️</h2>
       <p id="modalText">Nadia, contigo todo se siente más bonito. Quiero cuidarte, hacerte reír y sumar paz a tu vida. Hoy y siempre, yo elijo estar contigo. ✨</p>
 
@@ -544,12 +565,16 @@
         var overlay = document.getElementById('overlay');
         var closeBtn = document.getElementById('closeBtn');
         var confetti = document.getElementById('confetti');
+        var modalEl = document.getElementById('modal');
 
         // Countdown els
         var countdownBox = document.getElementById('countdown');
         var countdownTime = document.getElementById('countdownTime');
 
-        if(!yesBtn || !noBtn || !overlay || !closeBtn || !confetti){
+        // Carta (acordeón)
+        var letterAcc = document.getElementById('letterAcc');
+
+        if(!yesBtn || !noBtn || !overlay || !closeBtn || !confetti || !modalEl){
           console.warn('Faltan elementos del DOM (IDs). Revisa que el HTML completo esté pegado.');
           return;
         }
@@ -558,6 +583,8 @@
         var countdownTimer = null;
 
         function openOverlay(){
+          // Bloquea el scroll del fondo, pero deja scrollear el modal
+          document.body.style.overflow = 'hidden';
           overlay.classList.add('show');
           overlay.setAttribute('aria-hidden','false');
           startConfetti();
@@ -567,6 +594,7 @@
         function closeOverlay(){
           overlay.classList.remove('show');
           overlay.setAttribute('aria-hidden','true');
+          document.body.style.overflow = '';
           stopConfetti();
           stopCountdown();
         }
@@ -602,6 +630,22 @@
         window.addEventListener('keydown', function(e){
           if(e.key === 'Escape' && overlay.classList.contains('show')) closeOverlay();
         });
+
+        // Al abrir la carta en celular, hacer scroll dentro del modal para verla completa
+        if(letterAcc){
+          letterAcc.addEventListener('toggle', function(){
+            if(letterAcc.open){
+              setTimeout(function(){
+                var top = Math.max(0, letterAcc.offsetTop - 10);
+                try{
+                  modalEl.scrollTo({ top: top, behavior: 'smooth' });
+                }catch(e){
+                  modalEl.scrollTop = top;
+                }
+              }, 60);
+            }
+          });
+        }
 
         // ===== Confetti =====
         function startConfetti(){
@@ -715,6 +759,9 @@
 
             dodge();
             assert('Dodge mueve NO a fixed', getComputedStyle(noBtn).position === 'fixed');
+
+            // extra: modal tiene overflow auto para scroll
+            assert('Modal scrolleable', getComputedStyle(modalEl).overflowY === 'auto' || getComputedStyle(modalEl).overflow === 'auto');
           }catch(e){
             results.push({name:'No hay exceptions', ok:false, error: String(e)});
           }
