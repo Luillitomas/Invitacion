@@ -107,9 +107,18 @@
         radial-gradient(520px 220px at 90% 10%, rgba(77,255,210,.14), transparent 60%);
       z-index:0;
       pointer-events:none;
+      transition: opacity .35s ease;
     }
 
     .card > *{position:relative; z-index:1}
+
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+    }
 
     .badge{
       display:inline-flex;
@@ -123,6 +132,7 @@
       -webkit-backdrop-filter: blur(10px);
       font-size: 13px;
       color: var(--muted);
+      white-space: nowrap;
     }
 
     .pulse{
@@ -158,12 +168,27 @@
         0 18px 60px rgba(168,85,247,.12);
     }
 
+    /* ===== Shimmer suave cada ~4s ===== */
     .title .question{
-      background: linear-gradient(90deg, #ff2d3d, #ff4da6, #a855f7);
+      background: linear-gradient(90deg, #ff2d3d, #ff4da6, #a855f7, #ff4da6, #ff2d3d);
+      background-size: 240% 100%;
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
       text-shadow: 0 18px 60px rgba(255,45,61,.16);
+      animation: shimmer 3.8s ease-in-out infinite;
+    }
+
+    @keyframes shimmer{
+      0%{ background-position: 0% 50%; filter: brightness(1); }
+      35%{ background-position: 100% 50%; filter: brightness(1.08); }
+      70%{ background-position: 30% 50%; filter: brightness(1); }
+      100%{ background-position: 0% 50%; filter: brightness(1); }
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      .title .question{ animation: none; }
+      .heart{ animation: none; }
     }
 
     .subtitle{
@@ -181,6 +206,54 @@
       color: rgba(255,255,255,.80);
       max-width: 62ch;
     }
+
+    /* ===== Carta (acordeón) ===== */
+    .accordion{
+      margin: 14px 0 8px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.06);
+      border-radius: 20px;
+      overflow:hidden;
+    }
+
+    .accordion summary{
+      list-style:none;
+      cursor:pointer;
+      padding: 14px 16px;
+      font-weight: 900;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      color: rgba(255,255,255,.92);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .accordion summary::-webkit-details-marker{ display:none; }
+
+    .accordion__chev{
+      width:28px;
+      height:28px;
+      border-radius: 12px;
+      display:grid;
+      place-items:center;
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.14);
+      transition: transform .25s ease;
+      flex:0 0 auto;
+    }
+
+    .accordion[open] .accordion__chev{ transform: rotate(180deg); }
+
+    .accordion__content{
+      padding: 0 16px 16px;
+      color: rgba(255,255,255,.78);
+      line-height: 1.7;
+      font-size: 15px;
+    }
+
+    .accordion__content p{ margin: 0 0 10px; }
+    .accordion__content p:last-child{ margin:0; }
 
     .actions{
       display:flex;
@@ -233,6 +306,7 @@
 
     .btn-no:hover{ background: rgba(255,255,255,.09) }
 
+    /* Overlay */
     .overlay{
       position:fixed;
       inset:0;
@@ -282,10 +356,39 @@
       line-height:1.6;
     }
 
+    /* Countdown */
+    .countdown{
+      margin: 10px 0 18px;
+      padding: 14px 14px;
+      border-radius: 18px;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.07);
+      display:grid;
+      gap:10px;
+      max-width: 520px;
+    }
+
+    .countdown__label{
+      font-size: 13px;
+      color: rgba(255,255,255,.72);
+    }
+
+    .countdown__time{
+      font-weight: 950;
+      letter-spacing: .02em;
+      font-size: clamp(18px, 2.8vw, 26px);
+      line-height: 1.15;
+      background: linear-gradient(90deg, rgba(255,216,77,1), rgba(77,183,255,1), rgba(168,85,247,1));
+      -webkit-background-clip:text;
+      background-clip:text;
+      color: transparent;
+    }
+
     .row{
       display:flex;
       gap:10px;
       flex-wrap:wrap;
+      justify-content:flex-end;
     }
 
     .btn-ghost{
@@ -293,6 +396,7 @@
       border:1px solid rgba(255,255,255,.14);
       color: var(--ink);
       box-shadow:none;
+      min-width: 160px;
     }
 
     .spark{
@@ -306,6 +410,7 @@
       font-size: 16px;
     }
 
+    /* Confetti */
     .confetti{
       position:fixed;
       inset:0;
@@ -333,6 +438,10 @@
     @media (max-width:420px){
       .card{padding:20px}
       .btn{width:100%; min-width: 0; justify-content:center}
+      .row{justify-content:center}
+      .btn-ghost{width:100%}
+      .badge{white-space: normal}
+      .topbar{justify-content:center}
     }
   </style>
 </head>
@@ -341,9 +450,11 @@
     <div class="float-layer" id="floatLayer" aria-hidden="true"></div>
 
     <main class="card" role="main">
-      <div class="badge">
-        <span class="pulse"></span>
-        <span>Mensaje especial de <strong>Luis</strong> para <strong>Nadia</strong></span>
+      <div class="topbar">
+        <div class="badge">
+          <span class="pulse"></span>
+          <span>Mensaje especial de <strong>Luis</strong> para <strong>Nadia</strong></span>
+        </div>
       </div>
 
       <h1 class="title">
@@ -355,12 +466,12 @@
       <p class="note">Nadia, contigo lo simple se vuelve especial. Quiero compartir contigo este 14 y muchos momentos bonitos más. ✨</p>
 
       <div class="actions">
-        <button class="btn btn-yes" id="yesBtn">
+        <button class="btn btn-yes" id="yesBtn" type="button">
           <span class="spark">💞</span>
           Sí
         </button>
 
-        <button class="btn btn-no" id="noBtn" aria-label="No">
+        <button class="btn btn-no" id="noBtn" type="button" aria-label="No">
           <span class="spark">🥺</span>
           No
         </button>
@@ -372,8 +483,28 @@
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
       <h2 id="modalTitle">Te amo mi melocotoncita ❤️</h2>
       <p id="modalText">Nadia, contigo todo se siente más bonito. Quiero cuidarte, hacerte reír y sumar paz a tu vida. Hoy y siempre, yo elijo estar contigo. ✨</p>
+
+      <details class="accordion" id="letterAcc">
+        <summary>
+          <span>Leer lo que te quería decir…</span>
+          <span class="accordion__chev" aria-hidden="true">⌄</span>
+        </summary>
+        <div class="accordion__content">
+          <p>Nadia… te lo digo con el corazón en la mano: desde que llegaste a mi vida, muchas cosas se sienten más ligeras. Me encanta tu forma de ser, tu manera de reaccionar a las cosas y esa vibra tuya que, sin darte cuenta, me calma.</p>
+          <p>A veces me cuesta explicarlo, pero contigo me nace ser mejor. Me dan ganas de cuidarte, de escucharte de verdad, de hacerte reír cuando estés cansada y de estar ahí cuando no tengas ganas de hablar. Me gusta cómo te ves cuando sonríes… y me gusta aún más saber que yo puedo provocar esa sonrisa.</p>
+          <p>Lo que siento por ti no es solo un momento: es admiración, ternura y un cariño real que crece con el tiempo. Me importas. Me importan tus días, tus metas, lo que te preocupa y lo que te hace ilusión. Contigo, lo simple se vuelve especial.</p>
+          <p>Me encanta cuando eres tú misma, sin filtros. Hay algo en ti que me atrae muchísimo: tu energía, tu forma de mirar, lo que transmites. A tu lado me siento cómodo y feliz, como si todo encajara. Y si alguna vez dudas, quiero que lo tengas claro: para mí eres increíble tal como eres.</p>
+          <p>Si me dejas, yo quiero seguir construyendo contigo: momentos bonitos, confianza y una historia que se sienta segura, bonita y nuestra. Gracias por existir y por ser tú. 💜</p>
+        </div>
+      </details>
+
+      <div class="countdown" id="countdown" aria-live="polite">
+        <div class="countdown__label">Cuenta regresiva para vernos hoy a las <strong>3:00 PM</strong>:</div>
+        <div class="countdown__time" id="countdownTime">--:--:--</div>
+      </div>
+
       <div class="row">
-        <button class="btn btn-ghost" id="closeBtn"><span class="spark">✅</span>Cerrar</button>
+        <button class="btn btn-ghost" id="closeBtn" type="button"><span class="spark">✅</span>Cerrar</button>
       </div>
     </div>
   </section>
@@ -390,7 +521,7 @@
       }
 
       runWhenReady(function init(){
-        // Background hearts
+        // ===== Background hearts =====
         var floatLayer = document.getElementById('floatLayer');
         if(floatLayer){
           var HEARTS = 26;
@@ -407,40 +538,44 @@
           }
         }
 
-        // Elements
+        // ===== Elements =====
         var yesBtn = document.getElementById('yesBtn');
         var noBtn  = document.getElementById('noBtn');
         var overlay = document.getElementById('overlay');
         var closeBtn = document.getElementById('closeBtn');
         var confetti = document.getElementById('confetti');
 
+        // Countdown els
+        var countdownBox = document.getElementById('countdown');
+        var countdownTime = document.getElementById('countdownTime');
+
         if(!yesBtn || !noBtn || !overlay || !closeBtn || !confetti){
           console.warn('Faltan elementos del DOM (IDs). Revisa que el HTML completo esté pegado.');
           return;
         }
 
+        var confettiTimer = null;
+        var countdownTimer = null;
+
         function openOverlay(){
           overlay.classList.add('show');
           overlay.setAttribute('aria-hidden','false');
           startConfetti();
+          startCountdown();
         }
 
         function closeOverlay(){
           overlay.classList.remove('show');
           overlay.setAttribute('aria-hidden','true');
           stopConfetti();
+          stopCountdown();
         }
 
         yesBtn.addEventListener('click', function(){
-          // Mantener texto del modal (ya está en HTML), pero por si se reutiliza:
-          var mt = document.getElementById('modalTitle');
-          var mp = document.getElementById('modalText');
-          if(mt) mt.textContent = 'Te amo mi melocotoncita ❤️';
-          if(mp) mp.textContent = 'Nadia, contigo todo se siente más bonito. Quiero cuidarte, hacerte reír y sumar paz a tu vida. Hoy y siempre, yo elijo estar contigo. ✨';
           openOverlay();
         });
 
-        // "No" never clickable
+        // ===== "No" nunca clickeable =====
         function dodge(){
           var rect = noBtn.getBoundingClientRect();
           var pad = 14;
@@ -464,9 +599,11 @@
         closeBtn.addEventListener('click', closeOverlay);
         overlay.addEventListener('click', function(e){ if(e.target === overlay) closeOverlay(); });
 
-        // Confetti
-        var confettiTimer;
+        window.addEventListener('keydown', function(e){
+          if(e.key === 'Escape' && overlay.classList.contains('show')) closeOverlay();
+        });
 
+        // ===== Confetti =====
         function startConfetti(){
           confetti.classList.add('show');
           confetti.innerHTML = '';
@@ -491,7 +628,7 @@
             confetti.appendChild(p);
           }
 
-          clearTimeout(confettiTimer);
+          if(confettiTimer) clearTimeout(confettiTimer);
           confettiTimer = setTimeout(function(){
             confetti.classList.remove('show');
           }, 3800);
@@ -500,12 +637,52 @@
         function stopConfetti(){
           confetti.classList.remove('show');
           confetti.innerHTML = '';
-          clearTimeout(confettiTimer);
+          if(confettiTimer) clearTimeout(confettiTimer);
+          confettiTimer = null;
         }
 
-        window.addEventListener('keydown', function(e){
-          if(e.key === 'Escape' && overlay.classList.contains('show')) closeOverlay();
-        });
+        // ===== Countdown to today 3:00 PM (local) =====
+        function getTargetToday3pm(){
+          var t = new Date();
+          t.setHours(15, 0, 0, 0);
+          return t;
+        }
+
+        function format2(n){ return (n < 10 ? '0' : '') + n; }
+
+        function startCountdown(){
+          if(!countdownBox || !countdownTime) return;
+          stopCountdown();
+
+          function tick(){
+            var now = new Date();
+            var target = getTargetToday3pm();
+            var diff = target.getTime() - now.getTime();
+
+            if(diff <= 0){
+              countdownTime.textContent = '¡Ya es hora! 💞';
+              stopCountdown();
+              return;
+            }
+
+            var totalSeconds = Math.floor(diff / 1000);
+            var hours = Math.floor(totalSeconds / 3600);
+            var minutes = Math.floor((totalSeconds % 3600) / 60);
+            var seconds = totalSeconds % 60;
+
+            countdownTime.textContent = format2(hours) + ':' + format2(minutes) + ':' + format2(seconds);
+          }
+
+          tick();
+          countdownTimer = setInterval(tick, 1000);
+        }
+
+        function stopCountdown(){
+          if(countdownTimer){
+            clearInterval(countdownTimer);
+            countdownTimer = null;
+          }
+        }
 
         // ===== Tests (opcional) =====
         (function runTests(){
@@ -516,7 +693,6 @@
           function assert(name, cond){ results.push({name:name, ok:!!cond}); }
 
           try{
-            // Existing expectations
             assert('Boton YES existe', !!yesBtn);
             assert('Boton NO existe', !!noBtn);
             assert('Overlay existe', !!overlay);
@@ -525,9 +701,17 @@
             assert('Boton YES dice Si', document.getElementById('yesBtn') && document.getElementById('yesBtn').innerText.indexOf('Sí') !== -1);
             assert('Modal titulo dice melocotoncita', document.getElementById('modalTitle') && document.getElementById('modalTitle').innerText.toLowerCase().indexOf('melocotoncita') !== -1);
             assert('Modal texto romantico existe', document.getElementById('modalText') && document.getElementById('modalText').innerText.length > 20);
-            assert('TikTok removido', !document.querySelector('.tiktok'));
             assert('Sin tip', !document.getElementById('hint'));
+            assert('Sin copiar', !document.getElementById('copyBtn'));
+            assert('TikTok removido', !document.querySelector('.tiktok'));
+            assert('Countdown existe', !!document.getElementById('countdown'));
+            assert('CountdownTime existe', !!document.getElementById('countdownTime'));
+            assert('Acordeon existe', !!document.getElementById('letterAcc'));
 
+            // Shimmer: debe tener animación
+            var q = document.querySelector('.title .question');
+            var cs = q ? getComputedStyle(q) : null;
+            assert('Shimmer activo', !!(cs && cs.animationName && cs.animationName !== 'none'));
 
             dodge();
             assert('Dodge mueve NO a fixed', getComputedStyle(noBtn).position === 'fixed');
